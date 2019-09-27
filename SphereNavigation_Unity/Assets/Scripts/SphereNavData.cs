@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ShpereFindPath
+namespace ShpereNavigation
 {
     public struct nearVertex {
-        uint[] index;
+        public uint[] index;
     }
     public class SphereNavData : ScriptableObject
     {
         public Vector3[] vertices;
-        public int vertexCount;
         public nearVertex[] nearVertices;
     }
 }

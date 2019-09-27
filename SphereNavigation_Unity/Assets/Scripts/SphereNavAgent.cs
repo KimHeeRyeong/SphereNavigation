@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ShpereFindPath{
+namespace ShpereNavigation
+{
 
     public class SphereNavAgent : MonoBehaviour
     {
         [SerializeField]
-        SphereNavData sphereNavData;
+        float speed;
 
-        public Vector3[] vertices { get=> sphereNavData.vertices; }
-        public int vertexCount { get => sphereNavData.vertexCount; }
 
-        public Vertex[] getVertices() {
-            return 
-        }
     }
 }

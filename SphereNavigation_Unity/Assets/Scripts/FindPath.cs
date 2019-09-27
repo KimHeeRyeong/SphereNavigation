@@ -4,16 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace ShpereFindPath
+namespace ShpereNavigation
 {
-    public struct Node
-    {
-        public uint NodeID;
-        public float FScore;//G+H
-        public float GScore;//start-child distance
-        public float HScore;//child-goal distance
-        public uint ParentNode;
-    }
     
     public class FindPath : MonoBehaviour
     {
