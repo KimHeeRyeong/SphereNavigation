@@ -25,10 +25,6 @@ namespace ShpereNavigation
         [SerializeField]
         SphereNavData sphereNavData;
 
-        List<Node> _openList;
-        List<Node> _closeList;
-        
-
         Vector3[] _vertices;
         nearVertex[] _nearVertices;
         int _vertexCount;
@@ -40,60 +36,77 @@ namespace ShpereNavigation
             _nearVertices = sphereNavData.nearVertices;
         }
         List<Vector3> FindPath(Vector3 startPos, Vector3 goalPos) {
+            List<Node> openList = new List<Node>();
+            List<Node> closeList = new List<Node>();
+            List<Vector3> path = new List<Vector3>();
+            openList.Clear();
+            closeList.Clear();
+            path.Clear();
+
             uint start_id = GetPositionId(startPos);
             uint goal_id = GetPositionId(goalPos);
 
-            if (start_id==goal_id)
-                return null;
-
-            List<Vector3> path =  new List<Vector3>();
-            path.Clear();
-
             Node startNode = new Node(start_id, 0,0,0,start_id);
-            _closeList.Add(startNode);
+            closeList.Add(startNode);
             uint parent = start_id;
             float pScoreG = 0;//parent scoreG
-            while ()
+            while (goal_id!=parent)
             {
+                //add nearNode in openlist
                 uint[] nears = _nearVertices[parent].index;
                 int nearCount = nears.Length;
                 for (int i = 0;i<nearCount;i++)
                 {
                     uint id = nears[nearCount];
-                    if (_closeList.Exists(x=>x.nodeID==id))
+                    if (closeList.Exists(x=>x.nodeID==id))
                         continue;
+
                     float scoreG = Vector3.Distance(_vertices[id], _vertices[parent])+pScoreG;
                     float scoreH = Vector3.Distance(_vertices[id], _vertices[goal_id]);
                     float scoreF = scoreG + scoreH;
-                    if (_openList.Exists(x => x.nodeID == id))
+                    if (openList.Exists(x => x.nodeID == id))
                     {
-                        Node openNode = _openList.Find(x => x.nodeID == id);
+                        Node openNode = openList.Find(x => x.nodeID == id);
                         if (openNode.scoreF > scoreF)
                             continue;
                         else
-                            _openList.Remove(openNode);
+                            openList.Remove(openNode);
                     }
                     Node node = new Node(id, scoreF, scoreG, scoreH, parent);
-                    _openList.Add(node);
+                    openList.Add(node);
                 }
                 
-                int openCount = _openList.Count;
-                //openList 갯수가 0이라면?
+                int openCount = openList.Count;
+                //if openList count = 0, fail find path
                 if (openCount == 0)
                 {
+                    Debug.Log("fail find path");
                     break;
                 }
-                //_openList 내부 가장 작은 scoreF값 구하기
-                Node minFNode = _openList[0];
+                //get minimum scoreF in openList and add this in closeList
+                Node minFNode = openList[0];
                 for(int i = 0; i < openCount; i++)
                 {
-                    if (minFNode.scoreF > _openList[i].scoreF)
-                        minFNode = _openList[i];
+                    if (minFNode.scoreF > openList[i].scoreF)
+                        minFNode = openList[i];
                 }
+                openList.Remove(minFNode);
+                closeList.Add(minFNode);
+                parent = minFNode.nodeID;
+                pScoreG = minFNode.scoreG;
             }
 
-            _closeList.Clear();
-            _openList.Clear();
+            //set path
+            while (parent != start_id)
+            {
+                Vector3 pos = _vertices[parent];
+                path.Add(pos);
+                parent = closeList.Find(x => x.nodeID == parent).nodeID;
+            }
+            path.Add(_vertices[start_id]);
+
+            closeList.Clear();
+            openList.Clear();
 
             return path;
         }

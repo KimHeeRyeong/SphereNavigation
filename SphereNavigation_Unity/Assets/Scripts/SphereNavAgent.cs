@@ -5,11 +5,7 @@ using UnityEngine;
 namespace ShpereNavigation
 {
 
-    public class SphereNavAgent : MonoBehaviour
+    public class SphereNavAgent : AStartFindPath
     {
-        [SerializeField]
-        float speed;
-
-
     }
 }
